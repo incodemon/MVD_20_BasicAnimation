@@ -37,13 +37,11 @@ void Game::init(int w, int h) {
     //create scene contents here
     
     
-    
-    
+
     
     
     int light_ent = ECS.createEntity("Light");
     Light& light = ECS.createComponentForEntity<Light>(light_ent);
-    //ECS.getComponentFromEntity<Transform>(light_ent).position(100, 100, 100);
     light.direction = lm::vec3(-1.0f, -1.0f, -1.0f);
     light.type = LightTypeDirectional;
 
