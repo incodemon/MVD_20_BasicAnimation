@@ -217,6 +217,16 @@ struct GUIText : public GUIElement {
 	lm::vec3 color = lm::vec3(1.0, 1.0, 1.0);
 };
 
+struct Animation : public Component {
+    std::string name = "";
+    GLint target_transform = -1;
+    GLuint num_frames = 0;
+    GLuint curr_frame = 0;
+    float ms_frame = 0;
+    float ms_counter = 0;
+    std::vector<lm::mat4> keyframes;
+
+};
 
 /**** COMPONENT STORAGE ****/
 
@@ -228,7 +238,8 @@ std::vector<Camera>,
 std::vector<Light>,
 std::vector<Collider>,
 std::vector<GUIElement>,
-std::vector<GUIText>
+std::vector<GUIText>,
+std::vector<Animation>
 > ComponentArrays;
 
 //way of mapping different types to an integer value i.e.
@@ -242,8 +253,9 @@ template<> struct type2int<Light> { enum { result = 3 }; };
 template<> struct type2int<Collider> { enum { result = 4 }; };
 template<> struct type2int<GUIElement> { enum { result = 5 }; };
 template<> struct type2int<GUIText> { enum { result = 6 }; };
+template<> struct type2int<Animation> { enum { result = 7}; };
 //UPDATE THIS!
-const int NUM_TYPE_COMPONENTS = 7;
+const int NUM_TYPE_COMPONENTS = 8;
 
 /**** ENTITY ****/
 

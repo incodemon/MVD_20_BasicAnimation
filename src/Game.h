@@ -12,7 +12,7 @@
 #include "CollisionSystem.h"
 #include "ScriptSystem.h"
 #include "GUISystem.h"
-
+#include "AnimationSystem.h"
 
 
 class Game
@@ -55,7 +55,7 @@ private:
     CollisionSystem collision_system_;
     ScriptSystem script_system_;
 	GUISystem gui_system_;
-    
+    AnimationSystem animation_system_;
 
 	int createFreeCamera_();
 	int createPlayer_(float aspect, ControlSystem& sys);

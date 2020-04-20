@@ -879,7 +879,69 @@ bool Parsers::parseJSONLevel(std::string filename,
 }
 
 bool Parsers::parseAnimation(std::string filename) {
-    
+    std::string line;
+    std::ifstream file(filename);
+    int line_counter = 0;
+    int frames_per_second = 0;
+
+    if (file.is_open()) {
+        //get name of target entity
+        std::string target_ent = "";
+        while (std::getline(file, line)) { // \n
+
+            if (line_counter == 0) {
+                target_ent = line;
+            }
+            if (line_counter == 1) {
+                frames_per_second = stoi(line);
+                break; //pause reading on second line
+            }
+            //advance line counter
+            line_counter++;
+        }
+
+        //find the target entity
+        if (target_ent != "") {
+            int entity_id = ECS.getEntity(target_ent);
+            if (entity_id == -1) {
+                std::cout << "ERROR: entity doesn't exist\n";
+                return false;
+            }
+            //create animation component for entity
+            Animation& anim = ECS.createComponentForEntity<Animation>(entity_id);
+
+            //read in keyframes
+            while (std::getline(file,line)) {
+                std::vector<std::string> w;
+                split(line, " ", w);
+                //w is now array of different string in line
+                //read w into a model matrix wich represent the frame
+                lm::mat4 new_frame;
+
+                //translation matrix
+                lm::mat4 translation;
+                translation.makeTranslationMatrix( stof(w[1]),stof(w[2]),stof(w[3]));
+                //rotation matrix
+                lm::quat qrot(stof(w[4]), stof(w[4]), stof(w[4]));
+                lm::mat4 rotation;
+                rotation.makeRotationMatrix(qrot);
+
+                //scale matrix
+                lm::mat4 scale;
+                scale.makeScaleMatrix(stof(w[7]), stof(w[8]), stof(w[9]));
+
+                new_frame = translation * rotation * scale * new_frame;
+
+                anim.keyframes.push_back(new_frame);
+            }
+            anim.num_frames = (GLuint)anim.keyframes.size();
+            anim.ms_frame = 1000.0f / (float)frames_per_second;
+        }else {
+            std::cout << "ERROR: anim file doesn't reference entity\n";
+            return false;
+        }
+    }
+    file.close();
     return false;
 }
 

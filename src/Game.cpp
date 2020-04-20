@@ -35,11 +35,23 @@ void Game::init(int w, int h) {
 
 
     //create scene contents here
-    
-    
+	int ball_entity = ECS.createEntity("ball");
+	Mesh& ball_mesh = ECS.createComponentForEntity<Mesh>(ball_entity);
+	ball_mesh.geometry = graphics_system_.createGeometryFromFile("data/assets/ball.obj");
+	ball_mesh.material = graphics_system_.createMaterial();
+	graphics_system_.getMaterial(ball_mesh.material).shader_id = phong_shader->program;
 
+	Parsers::parseAnimation("data/assets/bounce.anim");
     
-    
+	//create scene contents here
+	int plane_entity = ECS.createEntity("plane");
+	Mesh& plane_mesh = ECS.createComponentForEntity<Mesh>(plane_entity);
+	plane_mesh.geometry = graphics_system_.createGeometryFromFile("data/assets/plane_20x20.obj");
+	plane_mesh.material = graphics_system_.createMaterial();
+	graphics_system_.getMaterial(plane_mesh.material).shader_id = phong_shader->program;
+	ECS.getComponentFromEntity<Transform>(plane_entity).translate(0.0,-1.0,0.0);
+
+
     int light_ent = ECS.createEntity("Light");
     Light& light = ECS.createComponentForEntity<Light>(light_ent);
     light.direction = lm::vec3(-1.0f, -1.0f, -1.0f);
@@ -69,6 +81,9 @@ void Game::update(float dt) {
 	//collision
 	collision_system_.update(dt);
     
+	//Animation system
+	animation_system_.update(dt);
+
 	//scripts
 	script_system_.update(dt);
 
